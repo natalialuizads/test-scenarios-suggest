@@ -124,6 +124,6 @@ def health_check():
 # Configuração para usar a porta do Render (padrão 10000)
 if __name__ == "__main__":
     import uvicorn
+    import os
     port = int(os.getenv("PORT", 10000))
-    logger.info(f"Iniciando servidor na porta {port}")
     uvicorn.run(app, host="0.0.0.0", port=port)

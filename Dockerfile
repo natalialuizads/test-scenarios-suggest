@@ -6,8 +6,7 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
     PYTHONDONTWRITEBYTECODE=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
-    PORT=10000
+    PIP_DISABLE_PIP_VERSION_CHECK=on
 
 # Instala dependências do sistema
 RUN apt-get update && apt-get install -y \
@@ -26,5 +25,5 @@ COPY app /app
 # Porta padrão do Render
 EXPOSE 10000
 
-# Comando de início com otimizações de memória
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "${PORT:10000}", "--workers", "1"]
+# CORREÇÃO: Use um script de inicialização em vez de passar a porta diretamente
+CMD ["python", "/app/main.py"]
