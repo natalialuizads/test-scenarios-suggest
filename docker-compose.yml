@@ -1,25 +1,21 @@
 version: '3.8'
-
 services:
   db:
     image: ankane/pgvector
     container_name: scenario_db
-    env_file:
-      - .env
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: scenarios
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U admin -d scenarios"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   api:
     build: .
@@ -27,26 +23,22 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    env_file:
-      - .env
-    volumes:
-      - ./app:/app
     ports:
-      - "5000:5000"
+      - "10000:10000"  # Usando a porta padrão do Render para consistência
     environment:
-      DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}"
+      DATABASE_URL: "postgresql://admin:secret@db:5432/scenarios"
+      PORT: "10000"
     command: 
       - /bin/sh
       - -c
       - |
         # Esperar o banco ficar pronto
-        until pg_isready -h db -p 5432 -U ${DB_USER}; do
+        until pg_isready -h db -p 5432 -U admin; do
           echo "Waiting for PostgreSQL..."
           sleep 2
         done
-        
         # Iniciar a API
-        uvicorn main:app --host 0.0.0.0 --port 5000
+        uvicorn main:app --host 0.0.0.0 --port 10000
 
 volumes:
   db-data:
