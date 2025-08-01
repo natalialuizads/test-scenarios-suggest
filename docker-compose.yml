@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: ankane/pgvector
+    container_name: scenario_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: scenarios
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  api:
+    build: .
+    container_name: scenario_api
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./app:/app
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: "postgresql://admin:secret@db:5432/scenarios"
+    command: 
+      - /bin/sh
+      - -c
+      - |
+        # Esperar o banco ficar pronto
+        until pg_isready -h db -p 5432 -U admin; do
+          echo "Waiting for PostgreSQL..."
+          sleep 2
+        done
+        
+        # Iniciar a API
+        uvicorn main:app --host 0.0.0.0 --port 5000
+
+volumes:
+  db-data:
