@@ -27,4 +27,4 @@ COPY app /app
 EXPOSE 10000
 
 # Comando de início com otimizações de memória
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "${PORT:-10000}", "--workers", "1"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "${PORT:10000}", "--workers", "1"]
