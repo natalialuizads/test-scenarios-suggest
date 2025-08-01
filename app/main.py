@@ -8,7 +8,7 @@ import json
 import os
 import logging
 
-# Configuração básica de logging
+# Configura��o b�sica de logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -25,19 +25,19 @@ db = Database()
 
 @app.on_event("startup")
 async def startup():
-    logger.info("Iniciando aplicação...")
+    logger.info("Iniciando aplica��o...")
     await db.connect()
-    logger.info("Conexão com banco estabelecida")
+    logger.info("Conex�o com banco estabelecida")
     
     await db.create_extension()
-    logger.info("Extensão pgvector ativada")
+    logger.info("Extens�o pgvector ativada")
     
-    # Carregar dados em lotes menores para economizar memória
+    # Carregar dados em lotes menores para economizar mem�ria
     BATCH_SIZE = 200
     offset = 0
     total_loaded = 0
     
-    logger.info("Carregando cenários para o índice FAISS...")
+    logger.info("Carregando cen�rios para o �ndice FAISS...")
     while True:
         async with db.pool.acquire() as conn:
             records = await conn.fetch(
@@ -52,17 +52,17 @@ async def startup():
                 faiss.add_scenario(r['id'], r['title'])
                 total_loaded += 1
                 
-                # Log periódico para acompanhar progresso
+                # Log peri�dico para acompanhar progresso
                 if total_loaded % 1000 == 0:
-                    logger.info(f"Carregados {total_loaded} cenários...")
+                    logger.info(f"Carregados {total_loaded} cen�rios...")
             
             offset += BATCH_SIZE
     
-    logger.info(f"Total de {total_loaded} cenários carregados no índice")
+    logger.info(f"Total de {total_loaded} cen�rios carregados no �ndice")
     
-    # Iniciar listener para atualizações em tempo real
+    # Iniciar listener para atualiza��es em tempo real
     asyncio.create_task(listen_db_updates())
-    logger.info("Listener de atualizações iniciado")
+    logger.info("Listener de atualiza��es iniciado")
 
 async def listen_db_updates():
     async def callback(connection, pid, channel, payload):
@@ -70,7 +70,7 @@ async def listen_db_updates():
             data = json.loads(payload)
             faiss.update_from_db(data)
         except Exception as e:
-            logger.error(f"Erro ao processar atualização do banco: {str(e)}")
+            logger.error(f"Erro ao processar atualiza��o do banco: {str(e)}")
     
     await db.listen_for_updates(callback)
 
@@ -101,7 +101,7 @@ async def suggest_scenarios(query: str, k: int = 5):
             "results": results
         }
     except Exception as e:
-        logger.error(f"Erro na busca de sugestões: {str(e)}")
+        logger.error(f"Erro na busca de sugest�es: {str(e)}")
         raise HTTPException(status_code=500, detail="Erro interno no processamento da busca")
 
 @app.get("/scenarios/{id}")
@@ -121,9 +121,9 @@ async def generate_test_data(num_records: int = 5000):  # Reduzido de 10000 para
 def health_check():
     return {"status": "OK"}
 
-# Configuração para usar a porta do Render (padrão 10000)
+# Configura��o para usar a porta do Render (padr�o 10000)
 if __name__ == "__main__":
     import uvicorn
-    import os
     port = int(os.getenv("PORT", 10000))
+    logger.info(f"Iniciando servidor na porta {port}")
     uvicorn.run(app, host="0.0.0.0", port=port)

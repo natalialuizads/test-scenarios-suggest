@@ -25,5 +25,5 @@ COPY app /app
 # Porta padrão do Render
 EXPOSE 10000
 
-# CORREÇÃO: Use um script de inicialização em vez de passar a porta diretamente
+# CORREÇÃO: Use um script de inicialização
 CMD ["python", "/app/main.py"]

@@ -15,7 +15,7 @@ class FaissManager:
         # Configuração para quantização (reduz memória em ~75%)
         nlist = 50  # Número reduzido de clusters para economizar memória
         m = 8       # Número de subvetores
-        nbits = 8   # Bits por subvetor (256 centroids por subvetor)
+        nbits = 8   # Bits por subvetor
         
         quantizer = faiss.IndexFlatIP(self.dim)
         self.index = faiss.IndexIVFPQ(quantizer, self.dim, nlist, m, nbits)
