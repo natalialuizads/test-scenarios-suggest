@@ -1,0 +1,28 @@
+# Ignorar variáveis de ambiente
+.env
+*.env
+
+# Ignorar dados sensíveis
+*.faiss
+data/
+
+# Ignorar arquivos de ambiente Python
+.env/
+.venv/
+venv/
+env/
+
+# Ignorar arquivos de sistema
+.DS_Store
+.idea/
+.vscode/
+
+# Ignorar arquivos compilados
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignorar logs
+*.log
+logs/

@@ -30,7 +30,7 @@ async def startup():
     for r in records:
         faiss.add_scenario(r['id'], r['title'])
     
-    # Iniciar listener para atualiza��es em tempo real
+    # Iniciar listener para atualizações em tempo real
     asyncio.create_task(listen_db_updates())
 
 async def listen_db_updates():
